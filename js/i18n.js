@@ -64,7 +64,7 @@
       if (en) en.classList.toggle("is-active", lang === "en");
       btn.setAttribute(
         "aria-label",
-        lang === "es" ? "Switch to English" : "Cambiar a espanol"
+        lang === "es" ? "Switch to English" : "Cambiar a español"
       );
       btn.setAttribute("aria-pressed", "false");
     });
