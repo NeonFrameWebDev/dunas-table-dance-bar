@@ -83,8 +83,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,900&family=Great+Vibes&family=Inter:wght@400;600&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,900&family=Great+Vibes&family=Inter:wght@400;600&display=swap" /></noscript>
 
-  <!-- ── Hero preload + styles ───────────────────────────────── -->
-  <link rel="preload" as="image" href="assets/atmosphere_1.webp" fetchpriority="high" type="image/webp" />
+  <!-- ── Styles ──────────────────────────────────────────────── -->
+  <!-- The hero is now pure text + CSS (a bespoke cinematic stage), so there is
+       no hero image to decode. The wordmark is the LCP; fonts load fast via the
+       preconnect + non-blocking swap above. No image preload needed. -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
@@ -195,40 +197,53 @@
 
   <main>
 
-    <!-- ── Hero ──────────────────────────────────────────────── -->
-    <!-- Background is pure CSS (near-black + crimson spotlight + grain + vignette),
-         so the hero is infinitely sharp. The only photo is a CONTAINED portrait
-         film-still on the right, capped so the 640px source is never upscaled. -->
+    <!-- ── Hero: "Se encienden las luces / The lights come up" ──────────
+         A bespoke cinematic stage built entirely from light, motion, and the
+         brand's own typography. ZERO photos: every layer is vector/CSS, so it
+         is infinitely sharp at any resolution and the wordmark is the LCP.
+         Layers, back to front: near-black base -> crimson stage-light shafts
+         -> spotlight bloom -> floor glow -> film grain (global) + vignette ->
+         art-directed content. Entrance plays once on first paint; reduced
+         motion renders everything static and fully lit. -->
     <section class="hero" id="hero">
+
+      <!-- Light layers (decorative, behind content) -->
+      <div class="hero-stage" aria-hidden="true">
+        <div class="shaft shaft-1"></div>
+        <div class="shaft shaft-2"></div>
+        <div class="hero-bloom"></div>
+        <div class="hero-floor"></div>
+        <div class="hero-vignette"></div>
+      </div>
+
       <div class="wrap hero-inner">
-        <div class="hero-copy">
-          <p class="eyebrow hero-eyebrow reveal"
-             data-es="El mejor table dance y bar de Puerto Pe&ntilde;asco"
-             data-en="The premier table dance and bar in Rocky Point">El mejor table dance y bar de Puerto Pe&ntilde;asco</p>
-          <h1 class="hero-title reveal"
-              data-es="Donde la diversi&oacute;n y la sensualidad se unen."
-              data-en="Where the night ignites and desires awaken.">Donde la diversi&oacute;n y la sensualidad se unen.</h1>
-          <p class="hero-sub reveal"
-             data-es="El mejor ambiente, las luces, la m&uacute;sica<span class='y-ellas'>... y ellas.</span> Una noche diferente, con elegancia y mucho carisma."
-             data-en="The best atmosphere, the lights, the music<span class='y-ellas'>... and them.</span> A different kind of night, with elegance and a whole lot of charisma.">El mejor ambiente, las luces, la m&uacute;sica<span class="y-ellas">... y ellas.</span> Una noche diferente, con elegancia y mucho carisma.</p>
-          <div class="hero-actions reveal">
-            <a class="btn btn-primary" href="tel:+15204558930"
-               data-es="Reservar mesa" data-en="Reserve a table">Reservar mesa</a>
-            <a class="btn btn-ghost" href="tel:+15204558930"
-               data-es="Llamar ahora" data-en="Call now">Llamar ahora</a>
-          </div>
-        </div>
-        <div class="hero-figure">
-          <figure class="filmstill hero-still" data-stagger>
-            <div class="frame">
-              <img src="assets/atmosphere_1.webp" width="640" height="640" fetchpriority="high" decoding="async"
-                   data-es-attr-alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
-                   data-en-attr-alt="Intimate low-light atmosphere at Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
-                   alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco" />
-            </div>
-          </figure>
+        <p class="eyebrow hero-eyebrow"
+           data-es="El mejor table dance y bar de Puerto Pe&ntilde;asco"
+           data-en="The premier table dance and bar in Rocky Point">El mejor table dance y bar de Puerto Pe&ntilde;asco</p>
+
+        <!-- Single H1 carries the brand name + a descriptive line for SEO,
+             even though it is visually art-directed as wordmark + tagline. -->
+        <h1 class="hero-h1">
+          <span class="hero-wordmark">
+            <span class="hero-dunas" aria-hidden="true">DunaS</span>
+            <span class="hero-script" aria-hidden="true">Show Girls</span>
+            <span class="sr-only">Dunas Show Girls</span>
+          </span>
+          <span class="hero-tagline"
+                data-es="Donde la diversi&oacute;n y la sensualidad se unen."
+                data-en="Where the night ignites and desires awaken.">Donde la diversi&oacute;n y la sensualidad se unen.</span>
+        </h1>
+
+        <span class="hero-ember" aria-hidden="true"></span>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+15204558930"
+             data-es="Reservar mesa" data-en="Reserve a table">Reservar mesa</a>
+          <a class="btn btn-ghost" href="tel:+15204558930"
+             data-es="Llamar ahora" data-en="Call now">Llamar ahora</a>
         </div>
       </div>
+
       <div class="scroll-cue" aria-hidden="true">
         <span class="cue-line"></span>
       </div>

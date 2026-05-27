@@ -58,10 +58,14 @@ const K_SEEN = "dunasIntroSeen";
   const gate = $("#age-gate");
   if (!gate) return;
 
+  const fireCleared = () =>
+    document.dispatchEvent(new CustomEvent("dunas:gate-cleared"));
+
   const passed = localStorage.getItem(K_AGE) === "1";
   if (passed) {
     gate.remove();
     document.body.classList.remove("gate-open");
+    fireCleared();
     return;
   }
 
@@ -91,6 +95,9 @@ const K_SEEN = "dunasIntroSeen";
     enterBtn.addEventListener("click", () => {
       localStorage.setItem(K_AGE, "1");
       gate.classList.add("is-closing");
+      // Kick the hero entrance as the gate begins to dissolve, so the lights
+      // come up just as the velvet rope drops.
+      fireCleared();
       setTimeout(() => {
         gate.remove();
         document.body.classList.remove("gate-open");
@@ -101,6 +108,41 @@ const K_SEEN = "dunasIntroSeen";
     exitBtn.addEventListener("click", () => {
       window.location.href = "https://www.google.com";
     });
+  }
+})();
+
+/* ----- Hero entrance ("the lights come up", once) ----------------------- */
+/* Adds .is-entering to the hero so the CSS choreography plays a single time:
+   lights warm up, "DunaS" rises, "Show Girls" writes on in neon, eyebrow +
+   tagline + CTAs stagger up, the ember ignites, the scroll cue fades in. The
+   default (settled) hero look needs no JS, so this only ever adds the IN
+   animation. Disabled under reduced motion. Triggered the moment the age gate
+   clears (or, with no gate, on first paint). Plays at most once per page. */
+(function initHeroEntrance() {
+  const hero = document.querySelector(".hero");
+  if (!hero || REDUCED) return;
+
+  let played = false;
+  const play = () => {
+    if (played) return;
+    played = true;
+    hero.classList.add("is-entering");
+    // The longest entrance delay+duration is ~1.8s + 0.9s. Drop the class once
+    // it has settled so it never re-triggers; the ambient loops (defined
+    // outside .is-entering) keep running regardless.
+    setTimeout(() => hero.classList.remove("is-entering"), 3200);
+  };
+
+  // Primary trigger: the age gate signalling it has cleared.
+  document.addEventListener("dunas:gate-cleared", play, { once: true });
+
+  // Fallback: if the gate event never arrives (e.g. gate markup absent), start
+  // on next frame so the hero still animates in on a fresh load.
+  if (!document.getElementById("age-gate")) {
+    requestAnimationFrame(play);
+  } else {
+    // Safety net in case the event was missed.
+    setTimeout(play, 6000);
   }
 })();
 
