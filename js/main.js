@@ -192,73 +192,76 @@ const K_SEEN = "dunasIntroSeen";
 })();
 
 /* ----- SIGNATURE: scroll-following crimson spotlight -------------------- */
-/* A fixed radial-gradient layer whose --spot-y eases toward the vertical
-   center of whichever section is currently in view, via a single rAF lerp.
-   Cheap: rects are cached and only recomputed on resize / when sections
-   enter or leave the viewport. Disabled entirely under reduced motion. */
+/* A fixed radial-gradient layer with a STATIC gradient. To follow the scroll we
+   MOVE the whole layer with transform: translate3d(0, Ypx, 0) (GPU-composited,
+   no repaint) eased toward the vertical centre of whichever section is in view,
+   via a single rAF lerp. The gradient itself never changes, so there is zero
+   per-frame painting; the compositor just shifts an existing layer. Rects are
+   read inside the scheduled rAF only. Disabled entirely under reduced motion
+   (the CSS parks a beautiful static glow on its own). */
 (function initSpotlight() {
   const layer = $("#spotlight");
   if (!layer) return;
 
-  if (REDUCED) {
-    // Static, still beautiful: park the glow a touch above center.
-    layer.style.setProperty("--spot-y", "38%");
-    return;
-  }
+  // The layer's gradient rests at 40% of viewport height (see CSS geometry).
+  // We translate it by (targetPct - REST) % of viewport height, in pixels.
+  const REST_PCT = 40;
+
+  if (REDUCED) return; // CSS static glow is enough; no rAF, no transform churn.
 
   const sections = $$("main section[id], #hero");
-  if (!sections.length) {
-    layer.style.setProperty("--spot-y", "40%");
-    return;
-  }
+  if (!sections.length) return;
 
-  let target = 40; // percent of viewport height
-  let current = 40;
   const vh = () => window.innerHeight || document.documentElement.clientHeight;
+  let targetPct = REST_PCT; // desired gradient centre, % of viewport height
+  let currentPct = REST_PCT;
 
-  // Recompute the target based on the section nearest viewport center.
+  // Recompute the target based on the section nearest viewport centre.
   function recomputeTarget() {
-    const mid = vh() / 2;
+    const h = vh();
+    const mid = h / 2;
     let best = null;
     let bestDist = Infinity;
     for (const s of sections) {
       const r = s.getBoundingClientRect();
-      // Only consider sections that intersect the viewport.
-      if (r.bottom < 0 || r.top > vh()) continue;
+      if (r.bottom < 0 || r.top > h) continue; // only sections in view
       const center = r.top + r.height / 2;
       const d = Math.abs(center - mid);
       if (d < bestDist) { bestDist = d; best = center; }
     }
     if (best === null) return;
-    // Clamp so the bloom stays gracefully on screen.
-    target = Math.max(18, Math.min(82, (best / vh()) * 100));
+    targetPct = Math.max(18, Math.min(82, (best / h) * 100));
   }
+
+  const applyShift = () => {
+    // Convert the eased percent into a pixel translate of the oversized layer.
+    const shiftPx = ((currentPct - REST_PCT) / 100) * vh();
+    layer.style.setProperty("--spot-shift", shiftPx.toFixed(1) + "px");
+  };
 
   let scheduled = false;
   const schedule = () => {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(() => { recomputeTarget(); scheduled = false; });
+    requestAnimationFrame(() => { recomputeTarget(); scheduled = false; kick(); });
   };
   window.addEventListener("scroll", schedule, { passive: true });
   window.addEventListener("resize", schedule, { passive: true });
   recomputeTarget();
-  current = target;
+  currentPct = targetPct;
+  applyShift();
 
   let raf = null;
   function loop() {
-    current += (target - current) * 0.06; // slow cinematic ease
-    layer.style.setProperty("--spot-y", current.toFixed(2) + "%");
-    if (Math.abs(target - current) > 0.05) {
+    currentPct += (targetPct - currentPct) * 0.06; // slow cinematic ease
+    applyShift(); // mutates a transform var only -> compositor, no repaint
+    if (Math.abs(targetPct - currentPct) > 0.05) {
       raf = requestAnimationFrame(loop);
     } else {
       raf = null;
     }
   }
-  // Keep the loop alive while scrolling; restart on demand.
-  const kick = () => { if (raf === null) raf = requestAnimationFrame(loop); };
-  window.addEventListener("scroll", kick, { passive: true });
-  window.addEventListener("resize", kick, { passive: true });
+  function kick() { if (raf === null) raf = requestAnimationFrame(loop); }
   kick();
 })();
 
