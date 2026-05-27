@@ -928,6 +928,119 @@ p:last-child { margin-bottom: 0; }
 @keyframes cueDrop { 0%,100%{ transform: scaleY(0.4); opacity:0.4;} 50%{ transform: scaleY(1); opacity:1;} }
 
 /* =========================================================================
+   NEON MARQUEE BAND (SIGNATURE) - the transition out of the hero
+   A full-bleed crimson-neon theater sign. Cohesive with the hero's "Show Girls"
+   neon: a hot near-white core wrapped in layered crimson bloom on near-black.
+
+   PERFORMANCE CONTRACT (must not regress the scroll win):
+     - ONLY .marquee-track animates, and ONLY its transform (translateX). That is
+       a compositor property: no layout, no paint per frame. will-change:transform
+       promotes just that one element to its own GPU layer, isolated from the
+       page, so the loop never forces the rest of the document to recomposite.
+     - The neon glow is a STATIC layered text-shadow (painted once into the layer,
+       not animated) - exactly like the hero script. No animated filter / blur /
+       mix-blend-mode / box-shadow anywhere in this band.
+     - Seamless loop: the track holds the phrase group TWICE, so translateX(-50%)
+       lands the 2nd copy exactly where the 1st began -> no visible seam, ever.
+   ========================================================================= */
+.neon-marquee {
+  position: relative;
+  /* full-bleed strip, breaks the page gutter */
+  width: 100%;
+  background:
+    linear-gradient(180deg, #060507 0%, #0A0809 50%, #060507 100%);
+  /* thin crimson hairlines top + bottom = the frame of the sign */
+  border-top: 1px solid rgba(192,32,26,0.55);
+  border-bottom: 1px solid rgba(192,32,26,0.55);
+  box-shadow:
+    inset 0 1px 0 0 rgba(216,38,31,0.25),
+    inset 0 -1px 0 0 rgba(216,38,31,0.25),
+    0 0 34px -10px rgba(192,32,26,0.45);   /* static outer glow on the band */
+  overflow: hidden;
+  isolation: isolate;
+}
+/* A faint crimson wash centred behind the type so the sign sits in light. Static. */
+.neon-marquee::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 160% at 50% 50%,
+    rgba(192,32,26,0.14) 0%, rgba(192,32,26,0.05) 40%, rgba(13,12,15,0) 72%);
+}
+
+/* The window the track scrolls inside; edge-fade so phrases emerge from / recede
+   into the dark instead of hard-cutting at the viewport edge (cinematic, not
+   ticker). mask is a static gradient (no per-frame cost). */
+.marquee-viewport {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  /* the single seamless loop; linear so the speed is constant (sign-like) */
+  animation: marqueeScroll 38s linear infinite;
+  will-change: transform;   /* promote ONLY the moving track to its own layer */
+}
+@media (hover: hover) and (pointer: fine) {
+  .neon-marquee:hover .marquee-track { animation-play-state: paused; }
+}
+
+.marquee-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  /* vertical sign height: comfortable on phones, grander on desktop */
+  padding-block: clamp(0.85rem, 2.4vw, 1.5rem);
+}
+
+/* The phrases: Playfair, tracked-out uppercase = premium marquee signage.
+   Hot near-white core + layered crimson neon bloom (STATIC text-shadow,
+   matched to the hero "Show Girls"). */
+.mq-item {
+  flex: 0 0 auto;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 3.4vw, 2rem);
+  letter-spacing: clamp(0.14em, 0.6vw, 0.22em);
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  color: #FBF4F4;                /* hot near-white neon core */
+  text-shadow:
+    0 0 4px rgba(255,255,255,0.45),
+    0 0 12px rgba(216,38,31,0.85),
+    0 0 26px rgba(192,32,26,0.7),
+    0 0 52px rgba(192,32,26,0.4);
+}
+
+/* Crimson diamond separator: a styled rotated square with its own glow (not an
+   emoji). Sits between phrases, vertically centred. */
+.mq-diamond {
+  flex: 0 0 auto;
+  width: clamp(8px, 1.4vw, 11px);
+  height: clamp(8px, 1.4vw, 11px);
+  margin-inline: clamp(1.4rem, 4vw, 3rem);
+  transform: rotate(45deg);
+  background: var(--crimson-bright);
+  box-shadow:
+    0 0 6px rgba(216,38,31,0.9),
+    0 0 16px rgba(192,32,26,0.7);
+}
+
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }   /* exactly one group width = seamless */
+}
+
+/* =========================================================================
    Section scaffolding
    ========================================================================= */
 .section { padding-block: var(--section-pad); position: relative; }
@@ -1384,6 +1497,11 @@ p:last-child { margin-bottom: 0; }
   .filmstill img { transform: none; }
   .filmstill .frame::before { display: none; }
   .scroll-cue .cue-line { animation: none; }
+
+  /* NEON MARQUEE: STATIC. No scroll loop; the sign just sits, phrases fully
+     visible and lit. Pin the track to its start (translateX(0)); the diamonds
+     keep their own rotate(45deg) base transform (not reset here). */
+  .marquee-track { animation: none !important; transform: none !important; }
 
   /* HERO: no entrance, no sweep/breathe/sway. Render the full lit stage,
      static and beautiful. (The entrance + ambient keyframes live only in the
