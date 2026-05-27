@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neonframewebdev.github.io/dunas-table-dance-bar/sitemap.xml
