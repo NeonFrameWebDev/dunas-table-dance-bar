@@ -462,26 +462,26 @@ p:last-child { margin-bottom: 0; }
   overflow: hidden;
   isolation: isolate;
 }
-.hero-media {
-  position: absolute;
-  inset: -6% -6% -6% -6%;   /* bleed so parallax/Ken Burns never reveals edges */
-  z-index: -3;
-}
-.hero-media img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  filter: saturate(0.9) contrast(1.1) brightness(0.82);
-  transform-origin: center;
-}
-.hero-media::after {
-  /* duotone wash + hero vignette stacked */
+/* Pure-CSS cinematic background: near-black base + a soft vignette. The fixed
+   crimson scroll-spotlight (brightest here, at the top of the page) supplies the
+   light. No photo layer, so the hero stays infinitely sharp. The film-grain
+   overlay is the global fixed .grain layer. */
+.hero::before {
   content: "";
   position: absolute; inset: 0;
+  z-index: -2;
   background:
-    radial-gradient(120% 100% at 50% 30%, rgba(13,12,15,0) 30%, rgba(13,12,15,0.85) 100%),
-    linear-gradient(160deg, rgba(192,32,26,0.18) 0%, rgba(13,12,15,0.0) 35%, rgba(13,12,15,0.6) 100%);
+    radial-gradient(130% 110% at 64% 32%, rgba(13,12,15,0) 34%, rgba(13,12,15,0.55) 78%, rgba(8,7,9,0.92) 100%),
+    linear-gradient(160deg, rgba(192,32,26,0.10) 0%, rgba(13,12,15,0) 40%, rgba(8,7,9,0.55) 100%),
+    var(--base);
 }
-.hero-inner { padding-block: 7rem 5rem; max-width: 46rem; }
+.hero-inner {
+  padding-block: 8rem 5rem;
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+.hero-copy { max-width: 40rem; }
 .hero-eyebrow { color: var(--crimson); }
 .hero-title {
   font-size: clamp(2.6rem, 11vw, 6rem);
@@ -498,13 +498,30 @@ p:last-child { margin-bottom: 0; }
 .hero-sub .y-ellas { white-space: nowrap; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.85rem; }
 
-/* Ken Burns (motion only) */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-media img { animation: kenburns 24s ease-in-out infinite alternate; }
+/* Contained portrait film-still. Capped so the 640px source is NEVER upscaled:
+   the rendered frame stays well under the photo's native width. */
+.hero-figure { display: flex; justify-content: center; }
+.hero-still {
+  width: 100%;
+  max-width: 420px;                 /* mobile cap: keeps the 640px source sharp */
+  margin-inline: auto;
 }
-@keyframes kenburns {
-  from { transform: scale(1.0) translate3d(0,0,0); }
-  to   { transform: scale(1.08) translate3d(-1.5%, -1%, 0); }
+.hero-still .frame { aspect-ratio: 4 / 5; }   /* portrait */
+/* Motion: no Ken Burns, no idle breath. The only hero-photo motion is the
+   shared .filmstill letterbox-wipe reveal, which settles the image to scale(1)
+   (downscaled from the 640px source, so it stays crisp). Keeping it still here
+   means the contained photo never softens. */
+
+/* Magazine split from 820px up: crisp type left, contained photo right. */
+@media (min-width: 820px) {
+  .hero-inner {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .hero-still {
+    max-width: clamp(260px, 34vw, 540px);   /* rendered width stays <= ~540px */
+    margin-inline: 0 auto;
+  }
 }
 
 /* Scroll cue */
@@ -628,7 +645,17 @@ p:last-child { margin-bottom: 0; }
   line-height: 0.9;
   margin-bottom: 1.5rem;
 }
-.sg-las { font-family: var(--f-display); font-weight: 900; font-size: clamp(2rem, 7vw, 3.2rem); color: var(--ink); }
+.sg-las {
+  font-family: var(--f-display);
+  font-weight: 900;
+  /* Sized down from the original single-word "Ellas." so the longer
+     "El corazon de la noche." headline sits cleanly on 1-2 lines. */
+  font-size: clamp(1.7rem, 5.2vw, 2.6rem);
+  line-height: 1.05;
+  color: var(--ink);
+  max-width: 14ch;
+  text-wrap: balance;
+}
 .sg-script {
   font-family: var(--f-script);
   font-size: clamp(3.4rem, 16vw, 8rem);
@@ -946,7 +973,7 @@ p:last-child { margin-bottom: 0; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-  .hero-media img { animation: none; transform: none; }
+  .hero-still img { animation: none; transform: none; }
   .gate-bg img { animation: none; transform: none; }
   .reveal, .ember-line { opacity: 1 !important; transform: none !important; }
   .filmstill img { transform: none; }

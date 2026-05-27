@@ -196,28 +196,37 @@
   <main>
 
     <!-- ── Hero ──────────────────────────────────────────────── -->
+    <!-- Background is pure CSS (near-black + crimson spotlight + grain + vignette),
+         so the hero is infinitely sharp. The only photo is a CONTAINED portrait
+         film-still on the right, capped so the 640px source is never upscaled. -->
     <section class="hero" id="hero">
-      <div class="hero-media">
-        <img src="assets/atmosphere_1.webp" width="640" height="640" fetchpriority="high"
-             data-es-attr-alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
-             data-en-attr-alt="Intimate low-light atmosphere at Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
-             alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco" />
-      </div>
       <div class="wrap hero-inner">
-        <p class="eyebrow hero-eyebrow reveal"
-           data-es="El mejor table dance y bar de Puerto Pe&ntilde;asco"
-           data-en="The premier table dance and bar in Rocky Point">El mejor table dance y bar de Puerto Pe&ntilde;asco</p>
-        <h1 class="hero-title reveal"
-            data-es="Donde la diversi&oacute;n y la sensualidad se unen."
-            data-en="Where the night ignites and desires awaken.">Donde la diversi&oacute;n y la sensualidad se unen.</h1>
-        <p class="hero-sub reveal"
-           data-es="El mejor ambiente, las luces, la m&uacute;sica<span class='y-ellas'>... y ellas.</span> Una noche diferente, con elegancia y mucho carisma."
-           data-en="The best atmosphere, the lights, the music<span class='y-ellas'>... and them.</span> A different kind of night, with elegance and a whole lot of charisma.">El mejor ambiente, las luces, la m&uacute;sica<span class="y-ellas">... y ellas.</span> Una noche diferente, con elegancia y mucho carisma.</p>
-        <div class="hero-actions reveal">
-          <a class="btn btn-primary" href="tel:+15204558930"
-             data-es="Reservar mesa" data-en="Reserve a table">Reservar mesa</a>
-          <a class="btn btn-ghost" href="tel:+15204558930"
-             data-es="Llamar ahora" data-en="Call now">Llamar ahora</a>
+        <div class="hero-copy">
+          <p class="eyebrow hero-eyebrow reveal"
+             data-es="El mejor table dance y bar de Puerto Pe&ntilde;asco"
+             data-en="The premier table dance and bar in Rocky Point">El mejor table dance y bar de Puerto Pe&ntilde;asco</p>
+          <h1 class="hero-title reveal"
+              data-es="Donde la diversi&oacute;n y la sensualidad se unen."
+              data-en="Where the night ignites and desires awaken.">Donde la diversi&oacute;n y la sensualidad se unen.</h1>
+          <p class="hero-sub reveal"
+             data-es="El mejor ambiente, las luces, la m&uacute;sica<span class='y-ellas'>... y ellas.</span> Una noche diferente, con elegancia y mucho carisma."
+             data-en="The best atmosphere, the lights, the music<span class='y-ellas'>... and them.</span> A different kind of night, with elegance and a whole lot of charisma.">El mejor ambiente, las luces, la m&uacute;sica<span class="y-ellas">... y ellas.</span> Una noche diferente, con elegancia y mucho carisma.</p>
+          <div class="hero-actions reveal">
+            <a class="btn btn-primary" href="tel:+15204558930"
+               data-es="Reservar mesa" data-en="Reserve a table">Reservar mesa</a>
+            <a class="btn btn-ghost" href="tel:+15204558930"
+               data-es="Llamar ahora" data-en="Call now">Llamar ahora</a>
+          </div>
+        </div>
+        <div class="hero-figure">
+          <figure class="filmstill hero-still" data-stagger>
+            <div class="frame">
+              <img src="assets/atmosphere_1.webp" width="640" height="640" fetchpriority="high" decoding="async"
+                   data-es-attr-alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
+                   data-en-attr-alt="Intimate low-light atmosphere at Dunas Table Dance and Bar, Puerto Pe&ntilde;asco"
+                   alt="Ambiente &iacute;ntimo y luz baja en Dunas Table Dance and Bar, Puerto Pe&ntilde;asco" />
+            </div>
+          </figure>
         </div>
       </div>
       <div class="scroll-cue" aria-hidden="true">
@@ -276,9 +285,9 @@
         <div class="ember-line"></div>
         <div class="sg-layout">
           <div class="sg-text">
-            <p class="eyebrow reveal" data-es="El espect&aacute;culo" data-en="The show">El espect&aacute;culo</p>
+            <p class="eyebrow reveal" data-es="El espect&aacute;culo" data-en="Center stage">El espect&aacute;culo</p>
             <div class="sg-headline reveal">
-              <h2 class="sg-las" id="sg-title" data-es="Ellas." data-en="Them.">Ellas.</h2>
+              <h2 class="sg-las" id="sg-title" data-es="El coraz&oacute;n de la noche." data-en="The heart of the night.">El coraz&oacute;n de la noche.</h2>
               <span class="sg-script">Show Girls</span>
             </div>
             <p class="sg-sub eyebrow reveal" data-es="Elegancia y mucho carisma" data-en="Elegance and a whole lot of charisma">Elegancia y mucho carisma</p>
