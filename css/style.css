@@ -857,6 +857,11 @@ p:last-child { margin-bottom: 0; }
     clip-path: inset(0 100% 0 0);
     animation: neonWrite 0.9s var(--ease-out) 0.9s forwards;
   }
+  /* The clip-path write-on also clips the ::before crimson glow, which turns
+     the soft ellipse into a hard rectangle (the "box" behind Show Girls during
+     the intro). Keep the glow hidden through the wipe, then fade it in after
+     the text has written so it returns to its proper soft shape, no box. */
+  .hero.is-entering .hero-script::before { opacity: 0; animation: glowIn 0.7s ease 1.75s forwards; }
   .hero.is-entering .hero-eyebrow { animation: fadeRise 0.7s var(--ease-out) 1.4s forwards; }
   .hero.is-entering .hero-tagline { animation: fadeRise 0.7s var(--ease-out) 1.5s forwards; }
   .hero.is-entering .hero-actions { animation: fadeRise 0.7s var(--ease-out) 1.6s forwards; }
@@ -867,6 +872,7 @@ p:last-child { margin-bottom: 0; }
 @keyframes lightsUp { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glowIn { from { opacity: 0; } to { opacity: 0.75; } }
 
 @keyframes dunaRise {
   from { opacity: 0; transform: translateY(30px) scale(1.04); }
